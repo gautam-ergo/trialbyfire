@@ -1,2 +1,4 @@
 # trialbyfire
-Hello E-Commerce. SpringBoot Application
+Hello E-Commerce. 
+
+SpringBoot Application
