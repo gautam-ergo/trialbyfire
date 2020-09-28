@@ -5,8 +5,9 @@ import com.egen.orders.dto.Address;
 import com.egen.orders.dto.Item;
 import com.egen.orders.dto.Order;
 import com.egen.orders.dto.OrderItems;
+import com.egen.orders.exception.InvalidRequestException;
+import com.egen.orders.exception.OrderNotFoundException;
 import com.egen.orders.model.AddressDetails;
-import com.egen.orders.model.OrderItemId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,7 @@ public class OrderService {
      * @param id
      * @return response
      */
-    public Order orders(String id){
+    public Order orders(String id) throws OrderNotFoundException{
         Optional<com.egen.orders.model.Order> order = orderDAO.findById(UUID.fromString(id));
         Order response = null;
         com.egen.orders.model.Order o = null;
@@ -65,11 +66,19 @@ public class OrderService {
                      .orderItems(orderItems)
                      .build();
 
+        }else{
+            throw new OrderNotFoundException();
         }
         return response;
     }
 
-    public Order orders(String id, Order order){
+    public Order orders(String id, Order order) throws InvalidRequestException {
+        if (order==null) {
+            throw new InvalidRequestException("Invalid Order Request","order");
+        }
+        if (order.getOrderItems() == null){
+            throw new InvalidRequestException("Order Item is empty","orderItems");
+        }
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
         Date date = null;
         try {
